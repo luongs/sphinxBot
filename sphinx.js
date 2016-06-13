@@ -8,7 +8,7 @@ var controller = Botkit.slackbot({
 
 // connect bot to messages
 controller.spawn({
-  token: process.env.token
+  token: process.env.TOKEN
 }).startRTM();
 
 // bot listens to commands
