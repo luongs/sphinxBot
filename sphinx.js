@@ -1,3 +1,4 @@
+require('dotenv').config();
 var Botkit = require('./lib/Botkit.js');
 var os = require('os');
 
