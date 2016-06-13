@@ -1,1 +1,1 @@
-node sphinx.js
+web: node sphinx.js
