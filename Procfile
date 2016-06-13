@@ -1,1 +1,1 @@
-web: node sphinx.js
+web: TOKEN=xoxb-50102431046-5vTWctWNAKpAdvbsRRl8eLvV node sphinx.js
