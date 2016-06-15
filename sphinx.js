@@ -1,6 +1,8 @@
+require('dotenv').config();
 var Botkit = require('./lib/Botkit.js');
 var os = require('os');
 
+var RIDDLE = {};
 var controller = Botkit.slackbot({
   debug: false
 });
@@ -17,6 +19,9 @@ controller.hears(['(H|hello)', '(H|hi)'], 'direct_message,direct_mention,mention
   bot.reply(message, 'Hello. I am '+bot.identity.name+' the riddle bot.');
   bot.reply(message, 'Enter `riddle` when you are ready.');
 });
+
+RIDDLE.SKIP = "skip";
+RIDDLE.QUIT = "quit";
 
 controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot, message){
 
@@ -37,7 +42,14 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
   }
 
   checkAnswer = function(response, convo) {
-    if (response.text.toLowerCase() === riddles[index].answer){
+    var answer = response.text.toLowerCase();
+    if (answer === RIDDLE.SKIP){
+      skipRiddle(response, convo);
+    }
+    else if (answer === RIDDLE.QUIT){
+      exitBot(response, convo);
+    }
+    else if (answer === riddles[index].answer){
       convo.say("Correct.");
       index++;
       askRiddle(response, convo);
@@ -69,17 +81,27 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
       askRiddle(response,convo);
       convo.next();
     }
-    else if (response.text.toLowerCase() === "skip"){
-      index++;
-      askRiddle(response, convo);
+    else if (response.text.toLowerCase() === RIDDLE.SKIP){
+      skipRiddle(response, convo);
       convo.next();
     }
     // for quit and any other command typed in
     else {
-      convo.say("Goodbye.");
+      exitBot(response, convo);
       convo.next();
     }
 
+  }
+
+  skipRiddle = function(response, convo) {
+    index++;
+    askRiddle(response, convo);
+    convo.next();
+  }
+
+  exitBot = function(response, convo) {
+    convo.say("Goodbye.");
+    convo.next();
   }
 
   bot.startConversation(message, askRiddle);
