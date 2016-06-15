@@ -17,19 +17,23 @@ controller.spawn({
 controller.hears(['(H|hello)', '(H|hi)'], 'direct_message,direct_mention,mention', function(bot, message){
 
   bot.reply(message, 'Hello. I am '+bot.identity.name+' the riddle bot.');
-  bot.reply(message, 'Enter `riddle` when you are ready.');
+  bot.reply(message, 'Enter `riddle` or `random` when you are ready.');
 });
 
 RIDDLE.SKIP = "skip";
 RIDDLE.QUIT = "quit";
+RIDDLE.RANDOM = "random";
+RIDDLE.ANSWER = "answer";
+RIDDLE.TRYAGAIN = "try again";
 
-controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot, message){
+controller.hears(['riddle', 'random'], 'direct_message,direct_mention,mention', function(bot, message){
 
   var index = 0;
 
   askRiddle = function(response, convo) {
     if (index<riddles.length){
-      convo.ask(riddles[index].riddle, function (response, convo){
+      var riddleStr = index+"): "+riddles[index].riddle;
+      convo.ask(riddleStr, function (response, convo){
         checkAnswer(response, convo);
         convo.next();
       });
@@ -41,13 +45,22 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
     }
   }
 
+  askRandom = function(response, convo) {
+    var randIndex = Math.floor(Math.random()*riddles.length);
+    var riddleStr = randIndex+"): "+riddles[randIndex].riddle;
+    convo.ask(riddleStr, function(response, convo){
+      checkAnswer(response, convo);
+      convo.next();
+    });
+  }
+
   checkAnswer = function(response, convo) {
     var answer = response.text.toLowerCase();
     if (answer === RIDDLE.SKIP){
       skipRiddle(response, convo);
     }
     else if (answer === RIDDLE.QUIT){
-      exitBot(response, convo);
+      quitBot(response, convo);
     }
     else if (answer === riddles[index].answer){
       convo.say("Correct.");
@@ -63,7 +76,7 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
   }
 
   askRetry = function(response, convo) {
-    convo.ask("Try again, get answer, skip or quit?",
+    convo.ask("`try again`, `get answer`, `skip` or `quit`?",
                function(response, convo){
                 checkRetryAnswer(response, convo);
                 convo.next();
@@ -71,11 +84,11 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
   }
 
   checkRetryAnswer = function(response, convo) {
-    if (response.text.toLowerCase() === "try again"){
+    if (response.text.toLowerCase() === RIDDLE.TRYAGAIN){
       askRiddle(response, convo);
       convo.next();
     }
-    else if (response.text.toLowerCase() === "get answer" || response.text.toLowerCase() === "answer"){
+    else if (response.text.toLowerCase() === "get answer" || response.text.toLowerCase() === RIDDLE.ANSWER){
       convo.say("The answer is: "+riddles[index].answer);
       index++;
       askRiddle(response,convo);
@@ -87,7 +100,7 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
     }
     // for quit and any other command typed in
     else {
-      exitBot(response, convo);
+      quitBot(response, convo);
       convo.next();
     }
 
@@ -99,12 +112,17 @@ controller.hears('riddle', 'direct_message,direct_mention,mention', function(bot
     convo.next();
   }
 
-  exitBot = function(response, convo) {
+  quitBot = function(response, convo) {
     convo.say("Goodbye.");
     convo.next();
   }
 
-  bot.startConversation(message, askRiddle);
+  if (message.text.toLowerCase() === RIDDLE.RANDOM){
+    bot.startConversation(message, askRandom);
+  }
+  else{
+    bot.startConversation(message, askRiddle);
+  }
 });
 
 var riddles = [
