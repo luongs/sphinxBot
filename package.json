@@ -27,7 +27,8 @@
   },
   "scripts": {
     "pretest": "jscs ./lib/",
-    "test": "mocha tests/*.js"
+    "test": "mocha tests/*.js",
+    "start": "sphinx.js"
   },
   "repository": {
     "type": "git",
