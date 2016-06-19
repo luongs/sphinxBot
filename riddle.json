@@ -1,4 +1,26 @@
 {"riddleArray": [
+ {
+   "riddle":
+    "There is a certain crime, that if it is attempted, is punishable, but if it is committed, is not punishable. What is the crime? ",
+   "answer":
+     "suicide"
+ },
+
+ {
+  "riddle":
+    "Feed me and I am alive. Give me a drink and I die. What am I?",
+  "answer":
+    "fire"
+ },
+
+ {
+  "riddle":
+    "I am the first in earth, the second in heaven, I appear two times in a week. You can only see me once in a year, although I am the middle of the sea. Who am I?
+    ",
+  "answer":
+    "e"
+ },
+
  {"riddle":
    "Which creature has one voice and yet becomes four-footed and two-footed and three-footed?",
    "answer":
