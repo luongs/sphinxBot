@@ -1,21 +1,25 @@
-require('dotenv').config();
-var Botkit = require('./lib/Botkit.js');
-var os = require('os');
+/*jslint node: true */
+/*jslint esversion: 6 */
+"use strict";
 
-var controller = Botkit.slackbot({
+require('dotenv').config();
+let Botkit = require('./lib/Botkit.js');
+let os = require('os');
+
+let controller = Botkit.slackbot({
   debug: false
 });
 
-var RIDDLE = {};
-var riddleJSON = JSON.parse(require("fs").readFileSync("./riddle.json", "utf8"));
-var riddles = riddleJSON.riddleArray;
-var shuffledRiddles = shuffle(riddles);
+let RIDDLE = {};
+let riddleJSON = JSON.parse(require("fs").readFileSync("./riddle.json", "utf8"));
+let riddles = riddleJSON.riddleArray;
+let shuffledRiddles = shuffle(riddles);
 
 // shuffle using Fisher-Yates Shuffle algorithm
 function shuffle(riddles){
-  var currentIndex = riddles.length;
-  var temporaryValue;
-  var randomIndex;
+  let currentIndex = riddles.length;
+  let temporaryValue;
+  let randomIndex;
 
   // While there remain elements to shuffle
   while (0 !== currentIndex) {
@@ -53,11 +57,18 @@ RIDDLE.TRYAGAIN = "try again";
 
 controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(bot, message){
 
-  var index = 0;
+  let index = 0;
+  let askRiddle;
+  let checkAnswer;
+  let askRetry;
+  let checkRetryAnswer;
+  let skipRiddle;
+  let quitBot;
+
 
   askRiddle = function(response, convo) {
     if (index<shuffledRiddles.length){
-      var riddleStr = shuffledRiddles[index].riddle;
+      let riddleStr = shuffledRiddles[index].riddle;
       convo.ask(riddleStr, function (response, convo){
         checkAnswer(response, convo);
         convo.next();
@@ -71,7 +82,7 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
   };
 
   checkAnswer = function(response, convo) {
-    var answer = response.text.toLowerCase();
+    let answer = response.text.toLowerCase();
     if (answer === RIDDLE.SKIP){
       skipRiddle(response, convo);
     }
