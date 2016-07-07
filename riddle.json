@@ -2,6 +2,8 @@
  {
    "riddle":
     "There is a certain crime, that if it is attempted, is punishable, but if it is committed, is not punishable. What is the crime? ",
+   "hint":
+     "7 letters. There is no coming back after committing this crime.",
    "answer":
      "suicide"
  },
@@ -9,6 +11,8 @@
  {
   "riddle":
     "Feed me and I am alive. Give me a drink and I die. What am I?",
+  "hint":
+    "4 letters.",
   "answer":
     "fire"
  },
@@ -16,37 +20,48 @@
  {
   "riddle":
     "I am the first in earth, the second in heaven, I appear two times in a week. You can only see me once in a year, although I am the middle of the sea. Who am I?",
+  "hint":
+    "1 letter.",
   "answer":
     "e"
  },
 
  {"riddle":
    "Which creature has one voice and yet becomes four-footed and two-footed and three-footed?",
+   "hint":
+     "3 letters.",
    "answer":
      "man"
  },
 
  {"riddle":
   "There are two sisters: one gives birth to the other and she, in turn, gives birth to the first. Who are the two sisters?",
+  "hint":
+    "*** and ****. This happens everyday.",
   "answer":
     "day and night"
  },
 
  {"riddle":
   "There are 30 white horses on a red hill: first they champ, then they stamp, then they stand still. What are they?",
+  "hint":
+    "5 letters. Those horses can also be yellow, missing or damaged",
   "answer":
     "teeth"
  },
 
  {"riddle":
   "There is a house. A person enters this house blind but exits it seeing. What is it?",
-
+  "hint":
+    "6 letters. This house is typically only open on weekdays.",
   "answer":
     "school"
  },
 
  {"riddle":
   "Homer when asking fishermen how their day has been receives the following answer. 'What we caught, we threw away; what we didn't catch, we kept. What did we keep?",
+  "hint":
+    "4 letters. What they caught is unwanted and also found on land.",
   "answer":
     "lice"
   }

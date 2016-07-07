@@ -1,25 +1,23 @@
-/*jslint node: true */
-/*jslint esversion: 6 */
 "use strict";
 
 require('dotenv').config();
-let Botkit = require('./lib/Botkit.js');
-let os = require('os');
+var Botkit = require('./lib/Botkit.js');
+var os = require('os');
 
-let controller = Botkit.slackbot({
+var controller = Botkit.slackbot({
   debug: false
 });
 
-let RIDDLE = {};
-let riddleJSON = JSON.parse(require("fs").readFileSync("./riddle.json", "utf8"));
-let riddles = riddleJSON.riddleArray;
-let shuffledRiddles = shuffle(riddles);
+var RIDDLE = {};
+var riddleJSON = JSON.parse(require("fs").readFileSync("./riddle.json", "utf8"));
+var riddles = riddleJSON.riddleArray;
+var shuffledRiddles = shuffle(riddles);
 
 // shuffle using Fisher-Yates Shuffle algorithm
 function shuffle(riddles){
-  let currentIndex = riddles.length;
-  let temporaryValue;
-  let randomIndex;
+  var currentIndex = riddles.length;
+  var temporaryValue;
+  var randomIndex;
 
   // While there remain elements to shuffle
   while (0 !== currentIndex) {
@@ -53,22 +51,22 @@ RIDDLE.SKIP = "skip";
 RIDDLE.QUIT = "quit";
 RIDDLE.RIDDLE = "riddle";
 RIDDLE.ANSWER = "answer";
-RIDDLE.TRYAGAIN = "try again";
+RIDDLE.HINT = "hint";
 
 controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(bot, message){
 
-  let index = 0;
-  let askRiddle;
-  let checkAnswer;
-  let askRetry;
-  let checkRetryAnswer;
-  let skipRiddle;
-  let quitBot;
+  var index = 0;
+  var askRiddle;
+  var checkAnswer;
+  var askRetry;
+  var checkRetryAnswer;
+  var skipRiddle;
+  var quitBot;
 
 
   askRiddle = function(response, convo) {
     if (index<shuffledRiddles.length){
-      let riddleStr = shuffledRiddles[index].riddle;
+      var riddleStr = shuffledRiddles[index].riddle;
       convo.ask(riddleStr, function (response, convo){
         checkAnswer(response, convo);
         convo.next();
@@ -82,7 +80,7 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
   };
 
   checkAnswer = function(response, convo) {
-    let answer = response.text.toLowerCase();
+    var answer = response.text.toLowerCase();
     if (answer === RIDDLE.SKIP){
       skipRiddle(response, convo);
     }
@@ -95,6 +93,11 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
       askRiddle(response, convo);
       convo.next();
     }
+    else if (answer === RIDDLE.HINT){
+      convo.say("The hint is: "+ shuffledRiddles[index].hint);
+      askRiddle(response, convo);
+      convo.next();
+    }
     else {
       convo.say("Incorrect.");
       askRetry(response, convo);
@@ -103,7 +106,7 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
   };
 
   askRetry = function(response, convo) {
-    convo.ask("`try again`, `get answer`, `skip` or `quit`?",
+    convo.ask("Try another answer or type `hint`, `answer`, `skip` or `quit`.",
                function(response, convo){
                 checkRetryAnswer(response, convo);
                 convo.next();
@@ -111,11 +114,19 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
   };
 
   checkRetryAnswer = function(response, convo) {
-    if (response.text.toLowerCase() === RIDDLE.TRYAGAIN){
+    if (response.text.toLowerCase() === shuffledRiddles[index].answer){
+
+      convo.say("Correct.");
+      index++;
       askRiddle(response, convo);
       convo.next();
+
     }
-    else if (response.text.toLowerCase() === "get answer" || response.text.toLowerCase() === RIDDLE.ANSWER){
+    else if (response.text.toLowerCase() === RIDDLE.HINT){
+      convo.say("The hint is: "+ shuffledRiddles[index].hint);
+      conve.next();
+    }
+    else if (response.text.toLowerCase() === RIDDLE.ANSWER){
       convo.say("The answer is: "+shuffledRiddles[index].answer);
       index++;
       askRiddle(response,convo);
@@ -126,8 +137,12 @@ controller.hears(['riddle'], 'direct_message,direct_mention,mention', function(b
       convo.next();
     }
     // for quit and any other command typed in
-    else {if (response.text.toLowerCase() === RIDDLE.QUIT)
+    else if (response.text.toLowerCase() === RIDDLE.QUIT){
       quitBot(response, convo);
+      convo.next();
+    }
+    else {
+      askRiddle(response, convo);
       convo.next();
     }
 
