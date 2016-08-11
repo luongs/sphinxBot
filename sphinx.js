@@ -40,7 +40,6 @@ controller.spawn({
   token: process.env.TOKEN
 }).startRTM();
 
-// bot listens to commands
 controller.hears(['(H|hello)', '(H|hi)'], 'direct_message,direct_mention,mention', function(bot, message){
 
   bot.reply(message, 'Hello. I am '+bot.identity.name+' the riddle bot.');
