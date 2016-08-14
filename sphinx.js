@@ -35,6 +35,27 @@ function shuffle(riddles){
   return riddles;
 }
 
+controller.configureSlackApp(
+{
+  clientId: process.env.clientId,
+  clientSecret: process.env.clientSecret,
+  scopes: ['incoming-webhook', 'bot']
+});
+
+controller.setupWebserver(process.env.port, function(err, webserver){
+  controller
+    .createWebhookEndpoints(controller.webserver);
+
+  controller.createOauthEndpoints(controller.webserver, function(err,req,res) {
+      if (err){
+        res.status(500).send('ERROR: '+err);
+      }
+      else {
+        res.send('Success!');
+      }
+    });
+});
+
 // connect bot to messages
 controller.spawn({
   token: process.env.TOKEN
